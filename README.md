@@ -52,12 +52,12 @@ Para estructurar la solución se tomó como referencia el **modelo C4**, ya que 
 La solución quedó organizada en:
 
 - **Contexto del sistema**
-![Contexto del sistema](Images/contexto-del-sistema.png)
+![Contexto del sistema](_docs/images/contexto-del-sistema.png)
 - **Contenedores**
-![Contenedores](Images/contenedores.png)
-- **Componentes FrontEnd**
-
+![Contenedores](_docs/images/contenedores.png)
 - **Componentes BackEnd**
+![Contenedores](_docs/images/componentes-backend.png)
+
 
 ---
 
