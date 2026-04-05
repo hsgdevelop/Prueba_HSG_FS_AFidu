@@ -1,0 +1,69 @@
+<div class="layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="content">
+    <section class="toolbar-card">
+      <div class="toolbar-actions">
+        <button class="primary" (click)="showCreateModal = true">+ New</button>
+        <button class="primary" (click)="exportCsv()">Export</button>
+      </div>
+
+      <div class="search-row">
+        <input
+          type="text"
+          placeholder="Enter shared key"
+          [(ngModel)]="sharedKeySearch"
+          (keyup.enter)="searchBySharedKey()">
+
+        <button class="search-btn" (click)="searchBySharedKey()">Search</button>
+        <button class="secondary" (click)="showAdvancedModal = true">Advanced Search</button>
+        <button class="link-btn" (click)="clearSearch()">Reset</button>
+      </div>
+    </section>
+
+    <section class="grid-card">
+      <h1>Clients</h1>
+
+      <div *ngIf="errorMessage" class="message error">{{ errorMessage }}</div>
+      <div *ngIf="loading" class="message">Loading clients...</div>
+
+      <div class="table-wrapper" *ngIf="!loading">
+        <table>
+          <thead>
+          <tr>
+            <th>Shared Key</th>
+            <th>Business ID</th>
+            <th>E-mail</th>
+            <th>Phone</th>
+            <th>Data Added</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let client of clients; trackBy: trackBySharedKey">
+            <td>{{ client.sharedKey }}</td>
+            <td>{{ client.businessId }}</td>
+            <td>{{ client.email }}</td>
+            <td>{{ client.phone }}</td>
+            <td>{{ client.dateAdded }}</td>
+          </tr>
+          <tr *ngIf="clients.length === 0">
+            <td colspan="5" class="empty">No clients found.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<app-client-form-modal
+  *ngIf="showCreateModal"
+  (cancel)="showCreateModal = false"
+  (save)="createClient($event)">
+</app-client-form-modal>
+
+<app-advanced-search-modal
+  *ngIf="showAdvancedModal"
+  (cancel)="showAdvancedModal = false"
+  (search)="applyAdvancedSearch($event)">
+</app-advanced-search-modal>

@@ -1,0 +1,41 @@
+<div class="overlay">
+  <div class="modal">
+    <h2>Advanced Search</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-row">
+        <label>Name</label>
+        <input type="text" formControlName="name">
+      </div>
+
+      <div class="form-row">
+        <label>Phone</label>
+        <input type="text" formControlName="phone">
+      </div>
+
+      <div class="form-row">
+        <label>E-mail</label>
+        <input type="text" formControlName="email">
+      </div>
+
+      <div class="form-row">
+        <label>Start date</label>
+        <input type="date" formControlName="startDate">
+      </div>
+
+      <div class="form-row">
+        <label>End date</label>
+        <div>
+          <input type="date" formControlName="endDate">
+          <small *ngIf="form.controls['endDate'].errors?.['invalidRange']">End date must be greater than or equal to start date.</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="clear()">Clear</button>
+        <button type="button" class="secondary" (click)="cancel.emit()">Cancel</button>
+        <button type="submit" class="primary">Search</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="overlay">
+  <div class="modal">
+    <h2>Create New Client</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-row">
+        <label>Name</label>
+        <div>
+          <input type="text" formControlName="name">
+          <small *ngIf="form.controls['name'].touched && form.controls['name'].invalid">Name is required and must have at least 3 characters.</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Phone</label>
+        <div>
+          <input type="text" formControlName="phone">
+          <small *ngIf="form.controls['phone'].touched && form.controls['phone'].invalid">Phone must contain 7 to 15 digits.</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>E-mail</label>
+        <div>
+          <input type="email" formControlName="email">
+          <small *ngIf="form.controls['email'].touched && form.controls['email'].invalid">Enter a valid e-mail.</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Start date</label>
+        <div>
+          <input type="date" formControlName="startDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>End date</label>
+        <div>
+          <input type="date" formControlName="endDate">
+          <small *ngIf="form.controls['endDate'].errors?.['invalidRange']">End date must be greater than or equal to start date.</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="cancel.emit()">Cancel</button>
+        <button type="submit" class="primary">OK</button>
+      </div>
+    </form>
+  </div>
+</div>

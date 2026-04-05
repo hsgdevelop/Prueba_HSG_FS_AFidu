@@ -1,0 +1,18 @@
+<aside class="sidebar">
+  <div class="brand">
+    <img src="assets/logo.png" alt="Alianza logo" class="logo">
+  </div>
+
+  <div class="module-title">
+    <img src="assets/clients-icon.png" alt="Clients icon" class="module-icon">
+    <span>Clients</span>
+  </div>
+
+  <nav>
+    <a *ngFor="let item of menuItems"
+       href="javascript:void(0)"
+       [class.active]="item.active">
+      {{ item.label }}
+    </a>
+  </nav>
+</aside>
