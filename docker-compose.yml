@@ -1,0 +1,85 @@
+# ============================================================
+# docker-compose.yml — AFidu Client Admin
+#
+# Servicios:
+#   backend   → Spring Boot 3.4.13 / Java 17  (puerto 8080)
+#   frontend  → Angular 19 servido por nginx   (puerto 4200)
+#
+# Red:
+#   afidu-net → bridge network privada que permite que nginx
+#               resuelva el hostname "backend" internamente
+#               para hacer proxy de /api/** sin exponer el
+#               backend directamente al exterior.
+#
+# Uso:
+#   docker compose up --build         # primera vez
+#   docker compose up -d              # en background
+#   docker compose down               # parar y limpiar
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # Backend — Spring Boot
+  # ----------------------------------------------------------
+  backend:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    container_name: afidu-backend
+    restart: unless-stopped
+
+    # Puerto publicado en el host para acceso directo o debug.
+    # Si no se quiere exponer el backend al exterior, borra esta
+    # sección y deja que solo sea accesible desde la red interna
+    # a través del proxy nginx del frontend.
+    ports:
+      - "8080:8080"
+
+    networks:
+      - afidu-net
+
+    environment:
+      # Variables de entorno para Spring Boot.
+      # Puedes sobreescribir cualquier propiedad de
+      # application.properties desde aquí.
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8080
+
+    healthcheck:
+      # Verifica que la API REST esté respondiendo
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/clients || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s   # Spring Boot tarda en arrancar; evita falsos positivos
+
+  # ----------------------------------------------------------
+  # Frontend — Angular 19 servido por nginx
+  # ----------------------------------------------------------
+  frontend:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: afidu-frontend
+    restart: unless-stopped
+
+    ports:
+      - "4200:80"   # Accede en http://localhost:4200
+
+    networks:
+      - afidu-net
+
+    depends_on:
+      backend:
+        condition: service_healthy   # Espera a que el backend pase el healthcheck
+
+# ----------------------------------------------------------
+# Red bridge privada
+# Los contenedores se resuelven por nombre de servicio:
+#   frontend → puede acceder a "backend:8080" internamente
+# ----------------------------------------------------------
+networks:
+  afidu-net:
+    driver: bridge
+    name: afidu-net

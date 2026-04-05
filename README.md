@@ -334,7 +334,7 @@ Durante el diseño se consideraron estos atributos no funcionales:
 Las decisiones técnicas se documentaron en un **ADR** para dejar trazabilidad entre diseño, requerimientos e implementación.
 
 Archivo:
-- `docs/adr/0001-arquitectura-prueba-clientes.md`
+- [ADR 0001](_docs/adr/0001-arquitectura-prueba-clientes.md)
 
 El modelo C4 explica la arquitectura por niveles y el ADR justifica las decisiones tomadas.
 
@@ -364,19 +364,55 @@ Este demo no solo resuelve el flujo solicitado; también demuestra una forma ord
 
 ---
 
-## Siguientes pasos
+## Docker
 
-- reemplazar persistencia en memoria por base de datos
-- agregar autenticación y autorización
-- incorporar paginación y ordenamiento
-- fortalecer pruebas frontend
-- automatizar cobertura
-- incorporar pruebas end-to-end
-- fortalecer seguridad y observabilidad
-- preparar despliegue automatizado
+# Docker — AFidu Client Admin
+
+## Estructura de archivos a agregar al repo
+
+```
+Prueba_HSG_FS_AFidu/
+├── docker-compose.yml          ← orquestación de servicios
+├── BackEnd/
+│   └── Dockerfile              ← build multi-stage Maven + JRE 17
+└── FrontEnd/
+    ├── Dockerfile              ← build multi-stage Node 20 + nginx
+    └── nginx.conf              ← config de nginx con proxy /api
+```
+
+---
+
+## Cómo levantar todo
+
+```bash
+# Desde la raíz del repo (donde está docker-compose.yml)
+docker compose up --build
+```
+
+| Servicio   | URL                        |
+|------------|----------------------------|
+| Frontend   | http://localhost:4200      |
+| Backend    | http://localhost:8080      |
+
+---
+
+## Cómo funciona la comunicación frontend → backend
+
+```
+Browser → localhost:4200 → nginx (frontend container)
+                              ↓ proxy_pass /api/**
+                           backend:8080  (backend container)
+                           [red interna afidu-net]
+```
+
+nginx hace de proxy inverso: cualquier petición a `/api/**`
+la reenvía al contenedor `backend` por la red bridge `afidu-net`
+usando el hostname `backend` que Docker resuelve automáticamente.
 
 ---
 
 ## Autor
 
 HGS - Demo técnico fullstack para prueba técnica AFidu.
+
+
